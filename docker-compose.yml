@@ -1,48 +1,47 @@
-# web server
-nginx:
-  image: nginx:latest
-  ports:
-    - "80:80"
-    - "443:443"
-  volumes:
-    # app
-    - ./app/src:/usr/share/nginx/html
-    # nginx configs
-    - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-    - ./nginx/conf.d/:/etc/nginx/conf.d/:ro
-    # certificates
-#    - ./nginx/ca/server.crt/:/etc/nginx/server.crt:ro
-#    - ./nginx/caserver.key/:/etc/nginx/server.key:ro
-  links:
-    - fpm:__DOCKER_PHP_FPM__
+version: "2"
+services:
+    # web server
+    nginx:
+        container_name: docker-nginx
+        build: ./nginx
+        image: docker-nginx
+        ports:
+          - "80:8000"
+          - "1022:22"
+        volumes:
+          # app
+          - ./app/src:/var/www
+          # nginx configs
+          - ./nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf:ro
+          #- ./nginx/conf.d/:/etc/nginx/conf.d/:ro
+          # certificates
+      #    - ./nginx/ca/server.crt/:/etc/nginx/server.crt:ro
+      #    - ./nginx/caserver.key/:/etc/nginx/server.key:ro
+    php:
+        container_name: docker-php
+        build: ./php
+        image: docker-php
+        ports:
+          - "2022:22"
+          - "9000:9000"
 
-# php-fpm
-fpm:
-  build: ./php-fpm
-  ports:
-    - "9000"
-  volumes:
-    - ./app/src:/usr/share/nginx/html
-    # Your php.ini
-    - ./php-fpm/php.ini-production:/usr/local/etc/php/php.ini:ro
-  # environment:
-    # Set your APP env variables here:
-    # - APP_KEY=
-    # - DB_HOST=
-    # - DB_DATABASE=
-    # - DB_USERNAME=
-    # - DB_PASSWORD=
-  links:
-    - mysql:mysql
-
-# database
-mysql:
-  image: mysql:latest
-  ports:
-    # Allow client to access 3306
-    - "3306:3306"
-  volumes:
-    # NOTE: your data will be stored in ./mysql
-    - ./mysql:/var/lib/mysql
-  environment:
-    - MYSQL_ROOT_PASSWORD=root
+    mysql:
+        container_name: mysql
+        image: mysql:5.7
+        environment:
+            MYSQL_ROOT_PASSWORD: "root"
+            MYSQL_USER: "test"
+            MYSQL_PASSWORD: "test"
+            MYSQL_DATABASE: "test"
+        volumes:
+            - ./mysql:/var/lib/mysql
+        ports:
+            - "13306:3306"
+    # Redis 3.2.10: https://hub.docker.com/_/redis/
+    redis:
+        container_name: redis
+        image: redis:3.2.10
+        volumes:
+            - ./redis:/data
+        ports:
+            - "16379:6379"
