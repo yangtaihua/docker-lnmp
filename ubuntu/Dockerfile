@@ -10,22 +10,28 @@ RUN  apt-get update&&apt-get install -y vim wget gcc make
 #升级linux 内核
 #ssh服务安装
 COPY sshd_config /etc/ssh/
-RUN  apt-get install -y openssh-server
+RUN  apt-get install -y openssh-server supervisor
 # 下面这两句比较特殊，在centos6上必须要有，否则创建出来的容器sshd不能登录
 RUN ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key
 RUN ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key
-RUN mkdir /var/run/sshd
+RUN mkdir /var/run/sshd&&mkdir -p /var/log/supervisor
 #修改root密码
 RUN echo  "root:root" | chpasswd
 # 添加测试用户admin，密码admin，并且将此用户添加到sudoers里
 RUN useradd admin&&mkdir /home/admin \
     &&echo "admin:admin" | chpasswd \
     &&echo "admin   ALL=(ALL)       ALL" >> /etc/sudoers
+# 把admin用户的shell改成bash，否则SSH登录Ubuntu服务器，命令行不显示用户名和目录
+RUN usermod -s /bin/bash admin
 #开放22端口
 EXPOSE 22
-#添加ssh用户
+#配置supervisor
+RUN echo "[supervisord]">> /etc/supervisor/conf.d/supervisord.conf \
+    &&echo "nodaemon=true">> /etc/supervisor/conf.d/supervisord.conf \
+    &&echo "[program:sshd]">> /etc/supervisor/conf.d/supervisord.conf \
+    &&echo "command=/usr/sbin/sshd -D">> /etc/supervisor/conf.d/supervisord.conf
 #设置生成容器时需要执行的脚本
-CMD ["/usr/sbin/sshd","-D"]
+CMD ["/usr/bin/supervisord"]
 
 
 

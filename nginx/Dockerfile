@@ -1,5 +1,5 @@
 
-FROM yangtaihua/ubuntu:latest
+FROM yangtaihua/ubuntu:14.04
 MAINTAINER yangtaihua <957651480@qq.com>
 
 #安装nginx
@@ -14,7 +14,7 @@ RUN mkdir -p     /var/www/&&chmod -R 775 /var/www/
 RUN apt-get  install -y  libpcre3 libpcre3-dev zlib1g-dev \
     && wget "http://nginx.org/download/${NGINXVERSION}.tar.gz"&&tar -zxvf "${NGINXVERSION}.tar.gz" \
     && cd ${NGINXVERSION} \
-    && ./configure --prefix=/usr/local/nginx --user=admin --group=admin --with-pcre \
+    && ./configure --prefix=/usr/local/nginx --user=www --group=www --with-pcre \
     &&make \
     &&make install
 
@@ -29,10 +29,11 @@ WORKDIR /var/www
 RUN apt-get autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
+ENV PATH="/usr/local/nginx/sbin:${PATH}"
 #设置生成容器时需要执行的脚本
-ADD run.sh /root/run.sh
-RUN chmod u+x /root/run.sh
-CMD ["/root/run.sh"]
+RUN echo "[program:nginx]">> /etc/supervisor/conf.d/supervisord.conf \
+    &&echo "command=/usr/local/nginx/sbin/nginx">> /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord"]
 #开放22、80、443端口
 EXPOSE 22
 EXPOSE 80

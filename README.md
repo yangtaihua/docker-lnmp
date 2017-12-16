@@ -11,7 +11,7 @@
 
 **构建步骤:**
 
-1. 公共基础镜像制作
+1. 公共基础镜像制作(docker for windows10)
 
     docker-compose build ./ubuntu -t yangtaihua/ubuntu   
 2. 通过公共镜像构建其他镜像 
@@ -20,6 +20,8 @@
 3. 启动容器
 
     docker-compose up
+### 阿里云镜像地址
+    
 ### **注意事项**
   服务的配置文件请通过winscp连接的方式进行拷贝到本地，再进行共享
   当在windows上构建镜像时shell脚本必须是linux格式

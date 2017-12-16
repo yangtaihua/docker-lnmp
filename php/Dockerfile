@@ -1,12 +1,15 @@
 
-FROM yangtaihua/ubuntu:latest
+FROM yangtaihua/ubuntu:14.04
 MAINTAINER yangtaihua <957651480@qq.com>
 
-
+#添加www用户和组
+RUN groupadd  www&&useradd -g www www
+#创建网站根目录
+RUN mkdir -p     /var/www/&&chmod -R 775 /var/www
 WORKDIR /usr/local/src
 ENV PHPVERSION php-7.1.11
 #更新源
-RUN apt-get update && apt-get install -y  make unzip gdb \
+RUN apt-get update && apt-get install -y  make unzip gdb autoconf \
     build-essential libexpat1-dev libgeoip-dev libpng-dev \
     libpcre3-dev libssl-dev libxml2-dev rcs zlib1g-dev \
     libmcrypt-dev libcurl4-openssl-dev libjpeg-dev \
@@ -27,6 +30,8 @@ RUN apt-get update &&apt-get install -y  \
     --with-config-file-scan-dir=/etc/php/conf.d \
     --enable-debug \
     --enable-fpm \
+    --with-fpm-user=www \
+    --with-fpm-group=www \
     --with-curl \
     --with-gd \
     --with-gettext \
@@ -55,13 +60,14 @@ RUN apt-get update &&apt-get install -y  \
     --enable-xml \
     --enable-zip \
     &&make&&make install \
-    &&cp php.ini-development /etc/php/php.ini
+    &&cp php.ini-development /etc/php/php.ini \
+    &&cd /usr/local/php/etc&&cp php-fpm.conf.default php-fpm.conf \
+    &&cd  php-fpm.d&&cp www.conf.default www.conf
     #&&echo "export PATH=/usr/local/php/bin:\$PATH" >> ~/.bashrc \
     #&&echo "export PATH=/usr/local/php/sbin:\$PATH" >> ~/.bashrc \
     #&&source ~/.bashrc
 
 #安装swoole
-RUN apt-get install -y autoconf &&mkdir /var/www
 ENV PATH="/usr/local/php/bin:/usr/local/php/sbin:${PATH}"
 RUN cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& wget https://github.com/swoole/swoole-src/archive/v1.9.19.tar.gz \
@@ -99,9 +105,8 @@ RUN cd /home && rm -rf temp && mkdir temp && cd temp \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /var/www
 #设置生成容器时需要执行的脚本
-#ADD run.sh /root/run.sh
-#RUN chmod u+x /root/run.sh
-#启动服务
-#CMD ["/usr/sbin/sshd","-D"]
+RUN echo "[program:php-fpm]">> /etc/supervisor/conf.d/supervisord.conf \
+    &&echo "command=/usr/local/php/sbin/php-fpm --nodaemonize">> /etc/supervisor/conf.d/supervisord.conf
+CMD ["/usr/bin/supervisord"]
 EXPOSE 22
 EXPOSE 9000
