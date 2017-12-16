@@ -1,43 +1,31 @@
-# Introduction
+###关于Docker
+  首先需要掌握[docker](https://docs.docker.com) 和 [Docker-compose](https://docs.docker.com/compose)相关知识
+    
+### 构建思路
+  docker支持直接拉取镜像的方式或者通过dockerfile的方式构建容器，
+  前者虽然官方镜像，轻量，但是没有源码包或者相关的配置文件的 
+  如redis镜像是没有相关的配置文件，就需要使用后者的方式自行构建容器
+  首先构建一个更新源的基础镜像，为后续的构建节省更新源的时间
+  
+### 开始
 
-Deploy lnmp(Linux, Nginx, MySQL, PHP7) using docker.
+**构建步骤:**
 
-I want to share my ideas and designs about Web-Deploying using Docker with you.
+1. 公共基础镜像制作
 
-### Architecture
+    docker-compose build ./ubuntu -t yangtaihua/ubuntu   
+2. 通过公共镜像构建其他镜像 
 
-![architecture][1]
+    docker-compose build
+3. 启动容器
 
-The whole app is divided into three Containers:
-
-1. Nginx is running in `Nginx` Container, which handles requests and makes responses.
-2. PHP or PHP-FPM is put in `PHP-FPM` Container, it retrieves php scripts from host, interprets, executes then responses to Nginx. If necessary, it will connect to `MySQL` as well.
-3. MySQL lies in `MySQL` Container, 
-
-Our app scripts are located on host, you can edit files directly without rebuilding/restarting whole images/containers.
-
-### Build and Run
-
-At first, you should have had [Docker](https://docs.docker.com) and [Docker Compose](https://docs.docker.com/compose) installed.
-
-Without building images one by one, you can make use of `docker-compose` and simply issue:
-
-    $ sudo docker-compose up
-
-For more operations to containers, please refer to:
-
-    $ sudo docker-compose --help
-
-Check out your https://\<docker-host\> and have fun :beer:
-
+    docker-compose up
+### **注意事项**
+  服务的配置文件请通过winscp连接的方式进行拷贝到本地，再进行共享
+  当在windows上构建镜像时shell脚本必须是linux格式
+  构建的容器CMD不能可终止的，不然会导致容器启动后就退出了  
 ### Contributors
-
-Micooz <micooz@hotmail.com>
-
-sndnvaps <sndnvaps@gmail.com>
-
+yangtaihua <957651480@qq.com>
 ### License
 
 MIT
-
-  [1]: architecture.png
