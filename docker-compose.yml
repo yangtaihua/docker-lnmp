@@ -17,6 +17,10 @@ services:
           # certificates
       #    - ./nginx/ca/server.crt/:/etc/nginx/server.crt:ro
       #    - ./nginx/caserver.key/:/etc/nginx/server.key:ro
+        depends_on:
+          - php
+        links:
+          - php
     php:
         container_name: docker-php
         build: ./php
@@ -24,8 +28,19 @@ services:
         ports:
           - "2022:22"
           - "9000:9000"
+        volumes:
+          - ./app/src:/var/www
+          - ./php/php.ini:/etc/php/php.ini:ro
+          - ./php/php-fpm.conf:/usr/local/php/etc/php-fpm.conf:ro
+          - ./php/php-fpm.d/www.conf:/usr/local/php/etc/php-fpm.d/www.conf:ro
+        depends_on:
+          - mysql
+          - redis
+        links:
+          - mysql
+          - redis
     mysql:
-        container_name: mysql
+        container_name: docker-mysql
         image: mysql:5.7
         environment:
             MYSQL_ROOT_PASSWORD: "root"
@@ -38,7 +53,7 @@ services:
             - "13306:3306"
     # Redis 3.2.10: https://hub.docker.com/_/redis/
     redis:
-        container_name: redis
+        container_name: docker-redis
         image: redis:3.2.10
         volumes:
             - ./redis:/data
