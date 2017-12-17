@@ -19,7 +19,36 @@
     docker-compose build
 3. 启动容器
 
-    docker-compose up
+    docker-compose up 
+4. ngixn配置php-fpm
+    
+    nginx.conf配置虚拟站点，监听8000端口
+    
+    
+    server {
+            listen       8000;
+            #listen       somename:8080;
+            server_name  somename  alias  another.alias;
+    
+            location / {
+                root   /var/www;
+                index  index.html index.htm;
+            }
+            location ~ \.php$ {
+                root           /var/www;
+                fastcgi_pass   php:9000;
+                fastcgi_index  index.php;
+                fastcgi_param  SCRIPT_FILENAME  /var/www/$fastcgi_script_name;
+                include        fastcgi_params;
+            }
+    
+    }
+           
+ php-fpm 配置此处的监听的ip地址一定要改成容器名称，
+ 不然无法监听本容器的9000端口    
+    
+    listen = php:9000
+        
 ### 阿里云镜像地址
     
 ### **注意事项**
