@@ -28,6 +28,9 @@ services:
         ports:
           - "2022:22"
           - "9000:9000"
+          - "9501:9501" #swoole server
+          - "8081:8081" #swoole sd
+          - "9091:9091" #swoole sd
         volumes:
           - ./app/src:/var/www
           - ./php/php.ini:/etc/php/php.ini:ro
