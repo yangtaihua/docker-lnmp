@@ -62,9 +62,9 @@ RUN apt-get update &&apt-get install -y  \
     &&make&&make install \
     &&cp php.ini-development /etc/php/php.ini \
     &&cd /usr/local/php/etc&&cp php-fpm.conf.default php-fpm.conf \
-    &&cd  php-fpm.d&&cp www.conf.default www.conf
-    #&&echo "export PATH=/usr/local/php/bin:\$PATH" >> ~/.bashrc \
-    #&&echo "export PATH=/usr/local/php/sbin:\$PATH" >> ~/.bashrc \
+    &&cd  php-fpm.d&&cp www.conf.default www.conf \
+    &&echo "export PATH=/usr/local/php/bin:\$PATH" >> ~/.bashrc \
+    &&echo "export PATH=/usr/local/php/sbin:\$PATH" >> ~/.bashrc
     #&&source ~/.bashrc
 
 #安装swoole
@@ -81,6 +81,7 @@ RUN cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& cd /home/temp/swoole-src-1.9.19 \
 	&& phpize && ./configure --enable-async-redis --enable-openssl && make \
 	&& make install \
+	&& pecl install xdebug\
 	&& pecl install inotify \
 	&& pecl install ds \
 	&& pecl install igbinary \
@@ -93,6 +94,7 @@ RUN cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& php composer-setup.php --install-dir=/usr/bin --filename=composer \
 	&& rm -rf /home/temp \
 	&&cd /etc/php/conf.d/ \
+	&& echo zend_extension=xdebug.so>xdebug.ini \
 	&& echo extension=igbinary.so>igbinary.ini \
 	&& echo extension=redis.so>redis.ini \
 	&& echo extension=inotify.so>inotify.ini \
