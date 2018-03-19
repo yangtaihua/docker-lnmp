@@ -57,8 +57,8 @@ services:
     # Redis 3.2.10: https://hub.docker.com/_/redis/
     redis:
         container_name: docker-redis
-        image: redis:3.2.10
+        build: ./redis
         volumes:
-            - ./redis:/data
+            - ./redis/redis.conf:/usr/local/redis/conf/redis.conf
         ports:
             - "16379:6379"
