@@ -1,6 +1,7 @@
 # swoole
 FROM php:7.1-cli
-MAINTAINER Jincheng Zhang 896369042@qq.com
+MAINTAINER yangtaihua 957651480@qq.com
+
 # 构建swoole环境，在这里安装了php,swoole,composer
 RUN apt-get update && apt-get install -y \
 	zlib1g-dev \
@@ -10,6 +11,7 @@ RUN apt-get update && apt-get install -y \
 	wget \
 	git \
 	make \
+	openssh-server \
 	supervisor \
 	--no-install-recommends \
 	&& docker-php-ext-install zip opcache bcmath pdo_mysql \
@@ -44,10 +46,11 @@ RUN apt-get update && apt-get install -y \
 	&& echo extension=ds.so>ds.ini \
 	&& composer config -g repo.packagist composer https://packagist.phpcomposer.com \
 	&& mkdir -p /var/log/supervisor \
+    && mkdir /var/run/sshd \
 	&& apt-get autoclean \
     && apt-get autoremove \
     && rm -rf /var/lib/apt/lists/*
 
 COPY ./config/* /usr/local/etc/php/conf.d/
-
-CMD ["bin/bash"]
+EXPOSE 22
+CMD ["/usr/sbin/sshd","-D"]
