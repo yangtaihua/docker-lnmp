@@ -8,6 +8,8 @@ COPY sshd_config /etc/ssh/
 RUN apt-get update && apt-get install -y \
 	zlib1g-dev \
 	libpng12-dev \
+	libjpeg-dev \
+	libfreetype6-dev \
 	vim \
 	libssl-dev \
 	unzip \
@@ -17,7 +19,14 @@ RUN apt-get update && apt-get install -y \
 	supervisor \
 	openssh-server \
 	--no-install-recommends \
-	&& docker-php-ext-install gd zip opcache bcmath pdo_mysql
+	&& docker-php-ext-install zip opcache bcmath pdo_mysql \
+	&& docker-php-ext-configure gd \
+            --with-gd \
+            --with-freetype-dir=/usr/include/ \
+            --with-png-dir=/usr/include/ \
+            --with-jpeg-dir=/usr/include/ \
+    && docker-php-ext-install gd \
+    && docker-php-ext-enable gd
 RUN	 cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& wget https://github.com/swoole/swoole-src/archive/v2.1.3.tar.gz \
 	https://github.com/redis/hiredis/archive/v0.13.3.tar.gz \
