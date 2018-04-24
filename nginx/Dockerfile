@@ -1,40 +1,7 @@
-
-FROM yangtaihua/ubuntu:14.04
-MAINTAINER yangtaihua <957651480@qq.com>
-
-#安装nginx
-WORKDIR /usr/local/src
-#下载并解压源码包
-ENV NGINXVERSION nginx-1.12.2
-RUN adduser --system --no-create-home --disabled-password --group nginx
-#添加www用户和组
-RUN groupadd  www&&useradd -g www www
-#创建网站根目录
-RUN mkdir -p     /var/www/&&chmod -R 775 /var/www/
-RUN apt-get  install -y  libpcre3 libpcre3-dev zlib1g-dev \
-    && wget "http://nginx.org/download/${NGINXVERSION}.tar.gz"&&tar -zxvf "${NGINXVERSION}.tar.gz" \
-    && cd ${NGINXVERSION} \
-    && ./configure --prefix=/usr/local/nginx --user=www --group=www --with-pcre \
-    &&make \
-    &&make install
-
-RUN echo "daemon off;" >>/usr/local/nginx/conf/nginx.conf
-    #&&echo "daemon off;" >>/usr/local/nginx/conf/nginx.conf
-    #&&echo "daemon off;" >>/usr/local/nginx/conf/nginx.conf
-# forward request and error logs to docker log collector
-#RUN ln -sf /dev/stdout /var/log/nginx/access.log \
-#        && ln -sf /dev/stderr /var/log/nginx/error.log
-WORKDIR /var/www
-#清理包
-RUN apt-get autoclean \
-    && apt-get autoremove \
-    && rm -rf /var/lib/apt/lists/*
-ENV PATH="/usr/local/nginx/sbin:${PATH}"
-#设置生成容器时需要执行的脚本
-RUN echo "[program:nginx]">> /etc/supervisor/conf.d/supervisord.conf \
-    &&echo "command=/usr/local/nginx/sbin/nginx">> /etc/supervisor/conf.d/supervisord.conf
-CMD ["/usr/bin/supervisord"]
-#开放22、80、443端口
-EXPOSE 22
-EXPOSE 80
-EXPOSE 443
+FROM nginx:1.13
+#添加hosts
+RUN echo "admin.app.com company.app.com api.app.com app.com ">>/etc/hosts
+#创建目录
+RUN mkdir -m 777 -p /var/www/html
+WORKDIR /var/www/html
+CMD ["nginx", "-g", "daemon off;"]

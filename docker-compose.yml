@@ -1,64 +1,56 @@
+
 version: "2"
 services:
-    # web server
-    nginx:
+
+    docker-nginx:
         container_name: docker-nginx
         build: ./nginx
-        image: yangtaihua/ubuntu-nginx:1.12.2
-        ports:
-          - "80:8000"
-          - "1022:22"
+        image: nginx:1.13
         volumes:
-          # app
-          - ./app/src:/var/www
-          # nginx configs
-          - ./nginx/nginx.conf:/usr/local/nginx/conf/nginx.conf:ro
-          #- ./nginx/conf.d/:/etc/nginx/conf.d/:ro
-          # certificates
-      #    - ./nginx/ca/server.crt/:/etc/nginx/server.crt:ro
-      #    - ./nginx/caserver.key/:/etc/nginx/server.key:ro
+            - ./app/src:/var/www/html
+            - ./nginx/conf.d/app.conf:/etc/nginx/conf.d/app.conf:ro
+        ports:
+            - "8081:8081"
         depends_on:
-          - php
+            - docker-php
         links:
-          - php
-    php:
+            - docker-php
+    docker-php:
         container_name: docker-php
         build: ./php
-        image: yangtaihua/ubuntu-php:7.1.11
-        ports:
-          - "2022:22"
-          - "9000:9000"
-          - "9501:9501" #swoole server
-          - "8081:8081" #swoole sd
-          - "9091:9091" #swoole sd
+        image: php-swoole:7.1
         volumes:
-          - ./app/src:/var/www
-          - ./php/php.ini:/etc/php/php.ini:ro
-          - ./php/php-fpm.conf:/usr/local/php/etc/php-fpm.conf:ro
-          - ./php/php-fpm.d/www.conf:/usr/local/php/etc/php-fpm.d/www.conf:ro
+            - ./app/src:/var/www/html
+            - ./php/php-fpm.d/app.conf:/usr/local/etc/php-fpm.d/app.conf
+        ports:
+            - "1022:22"
+            - "19000:9000"
+            - "9091:9091"
+            - "9092:9092"
+            - "9093:9093"
         depends_on:
-          - mysql
-          - redis
+          - docker-mysql
+          - docker-redis
         links:
-          - mysql
-          - redis
-    mysql:
+          - docker-mysql
+          - docker-redis
+    docker-redis:
+        container_name: docker-redis
+        build: ./redis
+        image: redis:3.2.10
+        volumes:
+            - ./redis/redis.conf:/home/redis.conf
+        ports:
+            - "16379:6379"
+
+    docker-mysql:
         container_name: docker-mysql
         image: mysql:5.7
         environment:
             MYSQL_ROOT_PASSWORD: "root"
             MYSQL_USER: "test"
             MYSQL_PASSWORD: "test"
-            MYSQL_DATABASE: "test"
-        volumes:
-            - ./mysql:/var/lib/mysql
+            MYSQL_DATABASE: "automation"
         ports:
             - "13306:3306"
-    # Redis 3.2.10: https://hub.docker.com/_/redis/
-    redis:
-        container_name: docker-redis
-        build: ./redis
-        volumes:
-            - ./redis/redis.conf:/usr/local/redis/conf/redis.conf
-        ports:
-            - "16379:6379"
+

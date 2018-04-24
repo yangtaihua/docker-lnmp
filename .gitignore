@@ -1,8 +1,0 @@
-.idea/
-*.key
-*.pem
-*.crt
-*.csr
-/mysql/*
-/app/src/*
-/redis/*
