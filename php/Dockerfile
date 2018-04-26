@@ -40,6 +40,7 @@ RUN	 cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& phpize && ./configure --enable-async-redis --enable-openssl && make \
 	&& make install \
 	&& pecl install inotify \
+	&& pecl install yaf \
 	&& pecl install xdebug \
 	&& pecl install igbinary \
 	&& cd /home/temp/phpredis-3.1.3 \
@@ -55,7 +56,8 @@ RUN	 cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& echo extension=redis.so>redis.ini \
 	&& echo extension=inotify.so>inotify.ini \
 	&& echo extension=swoole.so>swoole.ini \
-	&& echo extension=xdebug.so>xdebug.ini \
+	&& echo extension=yaf.so>yaf.ini \
+	&& echo zend_extension=xdebug.so>xdebug.ini \
 	&& composer config -g repo.packagist composer https://packagist.phpcomposer.com \
 	&& mkdir -p /var/log/supervisor \
 	&& mkdir -p /var/run/sshd \
