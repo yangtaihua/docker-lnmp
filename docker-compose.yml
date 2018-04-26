@@ -24,7 +24,6 @@ services:
             - ./php/php-fpm.d/app.conf:/usr/local/etc/php-fpm.d/app.conf
         ports:
             - "1022:22"
-            - "9001:9001"
             - "9091:9091"
             - "9092:9092"
             - "9093:9093"
