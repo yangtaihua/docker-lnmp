@@ -5,9 +5,9 @@ services:
     docker-nginx:
         container_name: docker-nginx
         build: ./nginx
-        image: nginx:1.13
+        image: yangtaihua/nginx:1.13
         volumes:
-            - ./app/src:/var/www/html
+            - ./sites:/var/www/html
             - ./nginx/conf.d/app.conf:/etc/nginx/conf.d/app.conf:ro
         ports:
             - "8081:8081"
@@ -18,9 +18,9 @@ services:
     docker-php:
         container_name: docker-php
         build: ./php
-        image: php-swoole:7.1
+        image: yangtaihua/php-fpm:7.1
         volumes:
-            - ./app/src:/var/www/html
+            - ./sites:/var/www/html
             - ./php/php-fpm.d/app.conf:/usr/local/etc/php-fpm.d/app.conf
         ports:
             - "1022:22"
@@ -37,7 +37,7 @@ services:
     docker-redis:
         container_name: docker-redis
         build: ./redis
-        image: redis:3.2.10
+        image: yangtaihua/redis:3.2.10
         volumes:
             - ./redis/redis.conf:/home/redis.conf
         ports:
@@ -50,7 +50,7 @@ services:
             MYSQL_ROOT_PASSWORD: "root"
             MYSQL_USER: "test"
             MYSQL_PASSWORD: "test"
-            MYSQL_DATABASE: "automation"
+            MYSQL_DATABASE: "test"
         ports:
             - "13306:3306"
 

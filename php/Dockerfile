@@ -40,7 +40,7 @@ RUN	 cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& phpize && ./configure --enable-async-redis --enable-openssl && make \
 	&& make install \
 	&& pecl install inotify \
-	&& pecl install ds \
+	&& pecl install xdebug \
 	&& pecl install igbinary \
 	&& cd /home/temp/phpredis-3.1.3 \
 	&& phpize \
@@ -55,7 +55,7 @@ RUN	 cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& echo extension=redis.so>redis.ini \
 	&& echo extension=inotify.so>inotify.ini \
 	&& echo extension=swoole.so>swoole.ini \
-	&& echo extension=ds.so>ds.ini \
+	&& echo extension=xdebug.so>xdebug.ini \
 	&& composer config -g repo.packagist composer https://packagist.phpcomposer.com \
 	&& mkdir -p /var/log/supervisor \
 	&& mkdir -p /var/run/sshd \
@@ -66,7 +66,6 @@ RUN	 cd /home && rm -rf temp && mkdir temp && cd temp \
 
 EXPOSE 22
 EXPOSE 9000
-EXPOSE 9001
 #配置supervisor
 RUN echo "[supervisord]">> /etc/supervisor/conf.d/supervisord.conf \
     &&echo "nodaemon=true">> /etc/supervisor/conf.d/supervisord.conf \
