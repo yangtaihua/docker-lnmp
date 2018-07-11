@@ -67,7 +67,9 @@ RUN cd /home/temp/nghttp2-1.32.0 \
 	    --enable-mysqlnd \
 	&& make && make install
 RUN	cd /home/temp/phpredis-3.1.3 \
+    #&& pecl install igbinary \
 	&& phpize \
+	#&& ./configure --enable-redis-igbinary \
 	&& ./configure  \
 	&& make &&  make install \
 	&& cd /home/temp \
