@@ -84,15 +84,15 @@ RUN pecl install inotify \
     && cd /usr/local/etc/php/conf.d/ \
     && echo extension=inotify.so>inotify.ini \
     && echo extension=yaf.so>yaf.ini \
-    && echo #zend_extension=xdebug.so>xdebug.ini \
-    && echo xdebug.enable = off>>xdebug.ini \
+    && echo extension=swoole.so>swoole.ini \
+    && echo "#zend_extension=xdebug.so">xdebug.ini \
+    && echo xdebug.enable = >>xdebug.ini \
     && echo xdebug.remote_enable = on>>xdebug.ini \
     && echo xdebug.remote_host =${XDEBUG_HOST}>>xdebug.ini \
     && echo xdebug.idekey=PHPSTORM>>xdebug.ini \
     && echo xdebug.remote_handler = dbgp>>xdebug.ini \
-    && echo xdebug.remote_port = 9001>>xdebug.ini \
-    #&& echo extension=igbinary.so>igbinary.ini \
-    && echo extension=swoole.so>swoole.ini
+    && echo xdebug.remote_port = 9001>>xdebug.ini
+
 #composer 安装
 RUN php -r"copy('https://getcomposer.org/installer','composer-setup.php');" \
     && php composer-setup.php --install-dir=/usr/bin --filename=composer \
