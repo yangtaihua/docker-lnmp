@@ -8,6 +8,7 @@ RUN echo  "root:root" | chpasswd
 
 #更新安装基本命令
 RUN apt-get update&&apt-get install -y \
+    vim \
     unzip \
     wget \
     git \
@@ -84,7 +85,7 @@ RUN pecl install inotify \
     && echo extension=inotify.so>inotify.ini \
     && echo extension=yaf.so>yaf.ini \
     && echo zend_extension=xdebug.so>xdebug.ini \
-    && echo xdebug.enable = on>>xdebug.ini \
+    && echo xdebug.enable = off>>xdebug.ini \
     && echo xdebug.remote_enable = on>>xdebug.ini \
     && echo xdebug.remote_host =${XDEBUG_HOST}>>xdebug.ini \
     && echo xdebug.idekey=PHPSTORM>>xdebug.ini \
