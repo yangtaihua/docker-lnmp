@@ -1,5 +1,4 @@
-.idea/
-*.key
-*.pem
-*.crt
-*.csr
+# Created by .ignore support plugin (hsz.mobi)
+.idea
+/sites
+!/sites/website
