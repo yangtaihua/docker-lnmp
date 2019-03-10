@@ -1,3 +1,3 @@
-FROM redis:3.2.10
+FROM redis:5.0.3-alpine
 COPY redis.conf /home
 CMD ["redis-server","/home/redis.conf"]
