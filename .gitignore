@@ -2,3 +2,4 @@
 .idea
 /sites
 !/sites/website
+!/mysql/.gitignore
