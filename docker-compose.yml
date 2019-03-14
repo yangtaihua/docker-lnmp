@@ -23,12 +23,10 @@ services:
                     XDEBUG_CONFIG: remote_host=192.168.66.105 remote_port=9001
         volumes:
             - ./sites:/var/www/html
+            - ./php/php.ini:/usr/local/etc/php/php.ini
             - ./php/php-fpm.d/app.conf:/usr/local/etc/php-fpm.d/app.conf
         ports:
             - "1022:22"
-            - "9091:9091"
-            - "9092:9092"
-            - "9093:9093"
         depends_on:
           - docker-mysql
           - docker-redis
