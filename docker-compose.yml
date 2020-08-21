@@ -18,7 +18,7 @@ services:
     docker-php:
         container_name: docker-php
         build: ./php
-        image: yangtaihua/php-fpm:7.3
+        image: yangtaihua/php-fpm:5.6
         environment:
                     XDEBUG_CONFIG: remote_host=192.168.66.105 remote_port=9001
         volumes:
@@ -27,11 +27,10 @@ services:
             - ./php/php-fpm.d/app.conf:/usr/local/etc/php-fpm.d/app.conf
         ports:
             - "1022:22"
+            - "9000:9000"
         depends_on:
-          - docker-mysql
           - docker-redis
         links:
-          - docker-mysql
           - docker-redis
     docker-redis:
         container_name: docker-redis
@@ -42,16 +41,4 @@ services:
         ports:
             - "16379:6379"
 
-    docker-mysql:
-        container_name: docker-mysql
-        image: mysql:5.7
-        environment:
-            MYSQL_ROOT_PASSWORD: "root"
-            MYSQL_USER: "test"
-            MYSQL_PASSWORD: "test"
-            MYSQL_DATABASE: "automation"
-        volumes:
-            - ./mysql:/var/lib/mysql
-        ports:
-            - "13306:3306"
 

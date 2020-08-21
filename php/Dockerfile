@@ -1,11 +1,12 @@
 # sd-swoole
-FROM php:7.3-fpm
+FROM php:5.6-fpm
 MAINTAINER yangtaihua 957651480@qq.com
 #apt-get安装依赖时，可能会有对话框，制作镜像时如果不选择会导致失败，解决办法也很简单
 ENV DEBIAN_FRONTEND noninteractive
 #修改root 密码
 RUN echo  "root:root" | chpasswd
 #更新安装基本命令
+RUN sed -i 's/http:\/\/archive.ubuntu.com\/ubuntu\//http:\/\/mirrors.163.com\/ubuntu\//g' /etc/apt/sources.list
 RUN apt-get update&&apt-get install -y wget git  --no-install-recommends
 
 #ssh服务安装
@@ -33,29 +34,13 @@ RUN  docker-php-ext-configure gd \
     && docker-php-ext-install gd
 #下载编译的源码包
 RUN	 cd /home && rm -rf temp && mkdir temp && cd temp \
-	&& wget https://github.com/swoole/swoole-src/archive/v4.3.1.tar.gz \
-	&& tar -xzvf v4.3.1.tar.gz
-
+	&&wget  https://github.com/phalcon/cphalcon/archive/v3.4.2.tar.gz \
+	&& tar -xzvf v3.4.2.tar.gz
 #phalcon
-#RUN cd /home/temp/cphalcon-3.4.3 && phpize && make && make install && docker-php-ext-enable phalcon
-#swoole
-RUN cd /home/temp/swoole-src-4.3.1 && phpize \
-    && ./configure \
-            --with-php-config=/usr/local/bin/php-config \
-    	    --enable-async-redis \
-    	    --enable-openssl \
-    	    --enable-http2 \
-    	    ##--enable-sockets \
-    	    --enable-mysqlnd \
-    && make && make install && docker-php-ext-enable swoole
-#pecl方式安装扩展
-#RUN pecl install yaf&&  docker-php-ext-enable yaf
+RUN   cd /home/temp/cphalcon-3.4.2/build && ./install && docker-php-ext-enable phalcon
 #xdebug
-RUN pecl install xdebug && docker-php-ext-enable xdebug
-#composer 安装
-RUN php -r"copy('https://getcomposer.org/installer','composer-setup.php');" \
-    && php composer-setup.php --install-dir=/usr/bin --filename=composer \
-    && composer config -g repo.packagist composer https://packagist.phpcomposer.com
+RUN cd /home/temp && wget https://xdebug.org/files/xdebug-2.5.5.tgz&&tar -xzvf xdebug-2.5.5.tgz
+RUN cd /home/temp/xdebug-2.5.5 && phpize&&./configure --with-php-config=/usr/local/bin/php-config &&make install && docker-php-ext-enable xdebug
 #清除下载的临时包
 RUN rm -rf /home/temp
 #清除pecl下载的包
