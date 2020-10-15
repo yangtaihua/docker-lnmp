@@ -38,9 +38,13 @@ RUN	 cd /home && rm -rf temp && mkdir temp && cd temp \
 	&& tar -xzvf v3.4.2.tar.gz
 #phalcon
 RUN   cd /home/temp/cphalcon-3.4.2/build && ./install && docker-php-ext-enable phalcon
+
 #xdebug
 RUN cd /home/temp && wget https://xdebug.org/files/xdebug-2.5.5.tgz&&tar -xzvf xdebug-2.5.5.tgz
 RUN cd /home/temp/xdebug-2.5.5 && phpize&&./configure --with-php-config=/usr/local/bin/php-config &&make install && docker-php-ext-enable xdebug
+
+RUN cd /home/temp && wget https://github.com/nicolasff/phpredis/archive/3.1.3.tar.gz&& tar -xzvf  3.1.3.tar.gz
+RUN cd /home/temp/phpredis-3.1.3 && phpize&&./configure --with-php-config=/usr/local/bin/php-config &&make install && docker-php-ext-enable redis
 #清除下载的临时包
 RUN rm -rf /home/temp
 #清除pecl下载的包

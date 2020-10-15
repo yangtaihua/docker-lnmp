@@ -20,7 +20,7 @@ services:
         build: ./php
         image: yangtaihua/php-fpm:5.6
         environment:
-                    XDEBUG_CONFIG: remote_host=192.168.66.105 remote_port=9001
+                    XDEBUG_CONFIG: remote_host=192.168.3.5 remote_port=9001
         volumes:
             - ./sites:/var/www/html
             - ./php/php.ini:/usr/local/etc/php/php.ini
@@ -28,6 +28,7 @@ services:
         ports:
             - "1022:22"
             - "9000:9000"
+            - "3306:3306"
         depends_on:
           - docker-redis
         links:
